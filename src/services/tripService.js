@@ -1,5 +1,5 @@
 import { prisma } from '../lib/prisma.js'
-import { createTripSchema, updateTripSchema } from '../modules/trip.schema.js'
+import { createTripSchema, updateTripSchema } from '../modules/trip/trip.schema.js'
 
 export const createTrip = async (input) => {
   const validateInput = createTripSchema.safeParse(input)
