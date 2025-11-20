@@ -19,3 +19,9 @@ export const createTrip = async (input) => {
     throw new Error(validateInput.error?.message || 'Invalid trip input')
   }
 }
+
+
+export const listTrips = async () => {
+  const trips = await prisma.trip.findMany({orderBy: {createdAt: 'desc'}})
+  return trips
+}
