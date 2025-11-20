@@ -49,3 +49,12 @@ export const updateTrip = async (id, input) => {
     throw new Error(validateInput.error?.message || 'Invalid trip input')
   }
 }
+
+export const deleteTrip = async (id) => {
+  const tripId = Number(id)
+  if(isNaN(tripId)) throw new Error('Trip ID must be a number')
+
+  const deleteTrip = await prisma.trip.delete({where: { id: tripId }})
+
+  return deleteTrip
+}
