@@ -25,3 +25,14 @@ export const listTrips = async () => {
   const trips = await prisma.trip.findMany({orderBy: {createdAt: 'desc'}})
   return trips
 }
+
+export const getTripById = async (id) => {
+  const tripId = Number(id)
+  if(isNaN(tripId)) throw new Error('Invalid Trip ID')
+
+  const trip = await prisma.trip.findUnique({where:{id: tripId}})
+
+  if (!trip) throw new Error("Trip not found")
+
+  return trip
+}

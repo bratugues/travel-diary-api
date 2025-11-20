@@ -6,6 +6,7 @@ export const createTripSchema = z.object({
   startDate: z.coerce.date(),
   endDate: z.coerce.date().optional()
 })
+
 export const updateTripSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
