@@ -13,7 +13,7 @@ export const createTripController = async (req, res, next) => {
 export const listTripsController = async (req, res, next) => {
   try {
     const trips = await listTrips()
-    res.json(trips)
+    return res.json(trips)
   } catch (error) {
     next(error)
   }
@@ -23,7 +23,7 @@ export const getTripByIdController = async (req, res, next) => {
   const { id } = req.params
   try {
     const trip = await getTripById(id)
-    res.json(trip)
+    return res.json(trip)
   } catch (error) {
     next(error)
   }
