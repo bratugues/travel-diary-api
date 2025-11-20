@@ -20,7 +20,6 @@ export const createTrip = async (input) => {
   }
 }
 
-
 export const listTrips = async () => {
   const trips = await prisma.trip.findMany({orderBy: {createdAt: 'desc'}})
   return trips
@@ -35,4 +34,18 @@ export const getTripById = async (id) => {
   if (!trip) throw new Error("Trip not found")
 
   return trip
+}
+
+export const updateTrip = async (id, input) => {
+  const tripId = Number(id)
+  if(isNaN(tripId)) throw new Error('Invalid Trip Id')
+
+  const validateInput = updateTripSchema.safeParse(input)
+
+  if (validateInput.success){
+    const updatedTrip = await prisma.trip.update({where: {id: tripId}, data: validateInput.data})
+    return updatedTrip
+  } else {
+    throw new Error(validateInput.error?.message || 'Invalid trip input')
+  }
 }
