@@ -4,20 +4,20 @@ import { createTripSchema, updateTripSchema } from '../modules/trip/trip.schema.
 export const createTrip = async (input) => {
   const validateInput = createTripSchema.safeParse(input)
 
-  if (validateInput.success) {
-    const { title, description, startDate, endDate } = validateInput.data
-    const trip = await prisma.trip.create({
-      data:{
-        title,
-        description,
-        startDate,
-        endDate
-      }
-    })
-    return trip
-  } else {
-    throw new Error(validateInput.error?.message || 'Invalid trip input')
+  if(!validateInput.success){
+    throw validateInput.error
   }
+
+  const { title, description, startDate, endDate } = validateInput.data
+  const trip = await prisma.trip.create({
+    data:{
+      title,
+      description,
+      startDate,
+      endDate
+    }
+  })
+  return trip
 }
 
 export const listTrips = async () => {
@@ -42,12 +42,11 @@ export const updateTrip = async (id, input) => {
 
   const validateInput = updateTripSchema.safeParse(input)
 
-  if (validateInput.success){
+  if(!validateInput.success){
+    throw validateInput.error
+  }
     const updatedTrip = await prisma.trip.update({where: {id: tripId}, data: validateInput.data})
     return updatedTrip
-  } else {
-    throw new Error(validateInput.error?.message || 'Invalid trip input')
-  }
 }
 
 export const deleteTrip = async (id) => {
