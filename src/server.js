@@ -16,7 +16,7 @@ app.use(express.json())
 
 app.use('/api', router)
 app.use('/trips', tripRouter)
-app.use('/entries', entryRouter)
+app.use('/', entryRouter)
 
 app.use(errorHandler)
 

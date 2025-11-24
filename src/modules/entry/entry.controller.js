@@ -5,7 +5,7 @@ export const createEntryController = async (req, res, next) => {
   const data = req.body
 
   try {
-    const newEntry = await createEntry(...data, tripId)
+    const newEntry = await createEntry({...data, tripId})
     return res.status(201).json(newEntry)
   } catch (error) {
     next(error)
@@ -35,7 +35,8 @@ export const getEntryByIdController = async (req, res, next) => {
 }
 
 export const updateEntryController = async (req, res, next) => {
-  const { id, data } = req.body
+  const data  = req.body
+  const { id } = req.params
 
   try {
     const updated = await updateEntry(id, data)
@@ -46,7 +47,7 @@ export const updateEntryController = async (req, res, next) => {
 }
 
 export const deleteEntryController = async (req, res, next) => {
-  const { id } = req.body
+  const { id } = req.params
 
   try {
     const deleted = await deleteEntry(id)

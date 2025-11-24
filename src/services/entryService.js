@@ -8,7 +8,7 @@ export const createEntry = async (input) => {
     throw result.error
   }
 
-  const { title, content, date } = result.data
+  const { title, content, date, tripId } = result.data
   const trip = await prisma.trip.findUnique({where: {id: Number(tripId)}})
 
   if (!trip) {

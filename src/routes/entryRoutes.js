@@ -8,9 +8,9 @@ router.post('/trips/:tripId/entries', createEntryController)
 
 router.get('/trips/:tripId/entries', listEntriesByTripIdController)
 
-router.get('/:id', getEntryByIdController)
+router.get('/entries/:id', getEntryByIdController)
 
-router.patch('/:id', updateEntryController)
+router.patch('/entries/:id', updateEntryController)
 
-router.delete('/:id', deleteEntryController)
+router.delete('/entries/:id', deleteEntryController)
 export const entryRouter = router
