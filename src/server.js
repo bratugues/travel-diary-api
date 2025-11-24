@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import router from './routes/index.js'
 import { tripRouter } from './routes/tripRoutes.js'
 import { errorHandler } from './middlewares/errorHandler.js'
+import { entryRouter } from './routes/entryRoutes.js'
 
 dotenv.config()
 
@@ -15,6 +16,7 @@ app.use(express.json())
 
 app.use('/api', router)
 app.use('/trips', tripRouter)
+app.use('/entries', entryRouter)
 
 app.use(errorHandler)
 
