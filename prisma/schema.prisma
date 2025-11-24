@@ -22,7 +22,7 @@ model Trip {
 model Entry {
   id        Int      @id @default(autoincrement())
   tripId    Int
-  trip      Trip     @relation(fields: [tripId], references: [id])
+  trip      Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
   title     String?
   content   String
   date      DateTime
