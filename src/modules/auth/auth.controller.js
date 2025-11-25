@@ -17,3 +17,10 @@ export const loginController = async (req, res, next) => {
     next(error)
   }
 }
+
+export const meController = async (req, res) => {
+  return res.json({
+    message: "You are authenticated",
+    yourId: req.userId
+  })
+}
