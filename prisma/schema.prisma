@@ -17,6 +17,9 @@ model Trip {
   updatedAt   DateTime  @updatedAt
 
   entries Entry[]
+
+  userId Int
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Entry {
@@ -28,4 +31,12 @@ model Entry {
   date      DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  name String
+  email String @unique
+  password String
+  trips Trip[]
 }
