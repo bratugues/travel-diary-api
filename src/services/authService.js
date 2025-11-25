@@ -1,6 +1,7 @@
 import { prisma } from '../lib/prisma.js'
-import { hashPassword } from '../utils/password.js'
-import { registerSchema } from '../modules/auth/auth.schema.js'
+import jwt from 'jsonwebtoken'
+import { hashPassword, comparePassword } from '../utils/password.js'
+import { registerSchema, loginSchema } from '../modules/auth/auth.schema.js'
 
 export const registerUser = async (input) => {
   const result = registerSchema.safeParse(input)
@@ -30,4 +31,33 @@ export const registerUser = async (input) => {
   const { password: _, ...userWithoutPassword } = user
 
   return userWithoutPassword
+}
+
+export const loginUser = async (input) => {
+  const result = loginSchema.safeParse(input)
+  if (!result.success) throw result.error
+
+  const { email, password } = result.data
+
+  const user = await prisma.user.findUnique({where: { email }})
+  if(!user) throw new Error("Invalid credentials")
+
+  const isPasswordValid = await comparePassword(password, user.password)
+
+  if(!isPasswordValid) throw new Error("Invalid credentials")
+
+  const token = jwt.sign(
+    { userId: user.id, email: user.email },
+    process.env.JWT_SECRET,
+    { expiresIn: '7d'}
+  )
+
+  return {
+    accessToken: token,
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email
+    }
+  }
 }
