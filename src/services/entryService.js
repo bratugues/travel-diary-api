@@ -1,7 +1,7 @@
 import { prisma } from '../lib/prisma.js'
 import { createEntrySchema, updateEntrySchema } from '../modules/entry/entry.schema.js'
 
-export const createEntry = async (input) => {
+export const createEntry = async (input, userId) => {
   const result = createEntrySchema.safeParse(input)
 
   if (!result.success) {
@@ -9,7 +9,7 @@ export const createEntry = async (input) => {
   }
 
   const { title, content, date, tripId } = result.data
-  const trip = await prisma.trip.findUnique({where: {id: Number(tripId)}})
+  const trip = await prisma.trip.findFirst({where: {id: tripId, userId: userId}})
 
   if (!trip) {
     throw new Error("Trip not found")
@@ -22,9 +22,9 @@ export const createEntry = async (input) => {
   return newEntry
 }
 
-export const getEntryById = async (id) => {
+export const getEntryById = async (id, userId) => {
   if(isNaN(id)) throw new Error("Invalid Entry ID")
-  const entry = await prisma.entry.findUnique({where:{id: Number(id)}})
+  const entry = await prisma.entry.findFirst({where:{id: Number(id), trip: {userId: userId}}})
 
   if (!entry) {
     throw new Error("Entry not found")
@@ -33,10 +33,10 @@ export const getEntryById = async (id) => {
   return entry
 }
 
-export const listEntriesByTripId = async (tripId) => {
+export const listEntriesByTripId = async (tripId, userId) => {
   if(isNaN(tripId)) throw new Error("Trip Id is not valid")
 
-  const trip = await prisma.trip.findUnique({where: {id: tripId}})
+  const trip = await prisma.trip.findFirst({where: {id: tripId, userId: userId}})
   if(!trip){
     throw new Error("Trip not found")
   }
@@ -45,18 +45,18 @@ export const listEntriesByTripId = async (tripId) => {
 
 }
 
-export const updateEntry = async (id, data) => {
-  const entry = await getEntryById(id)
+export const updateEntry = async (id, data, userId) => {
+  const entry = await getEntryById(id, userId)
 
   const updated = await prisma.entry.update({
-    where: {id: entry.id}, data: data
+    where: {id: entry.id,}, data: data
   })
 
   return updated
 }
 
-export const deleteEntry = async (id) => {
-  const entry = await getEntryById(id)
+export const deleteEntry = async (id, userId) => {
+  const entry = await getEntryById(id, userId)
 
   const deleted = await prisma.entry.delete({where: {id: entry.id}})
 

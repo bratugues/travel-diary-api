@@ -1,7 +1,7 @@
 import { prisma } from '../lib/prisma.js'
 import { createTripSchema, updateTripSchema } from '../modules/trip/trip.schema.js'
 
-export const createTrip = async (input) => {
+export const createTrip = async (userId, input) => {
   const validateInput = createTripSchema.safeParse(input)
 
   if(!validateInput.success){
@@ -14,31 +14,34 @@ export const createTrip = async (input) => {
       title,
       description,
       startDate,
-      endDate
+      endDate,
+      userId: userId
     }
   })
   return trip
 }
 
-export const listTrips = async () => {
-  const trips = await prisma.trip.findMany({orderBy: {createdAt: 'desc'}})
+export const listTrips = async (userId) => {
+  const trips = await prisma.trip.findMany({where: { userId: userId }, orderBy: {createdAt: 'desc'}})
   return trips
 }
 
-export const getTripById = async (id) => {
+export const getTripById = async (id, userId) => {
   const tripId = Number(id)
   if(isNaN(tripId)) throw new Error('Invalid Trip ID')
 
-  const trip = await prisma.trip.findUnique({where:{id: tripId}})
+  const trip = await prisma.trip.findFirst({where:{id: tripId, userId: userId}})
 
   if (!trip) throw new Error("Trip not found")
 
   return trip
 }
 
-export const updateTrip = async (id, input) => {
+export const updateTrip = async (id, input, userId) => {
   const tripId = Number(id)
   if(isNaN(tripId)) throw new Error('Invalid Trip Id')
+
+  await getTripById(tripId, userId)
 
   const validateInput = updateTripSchema.safeParse(input)
 
@@ -49,9 +52,11 @@ export const updateTrip = async (id, input) => {
     return updatedTrip
 }
 
-export const deleteTrip = async (id) => {
+export const deleteTrip = async (id, userId) => {
   const tripId = Number(id)
   if(isNaN(tripId)) throw new Error('Trip ID must be a number')
+
+  await getTripById(tripId, userId)
 
   const deleteTrip = await prisma.trip.delete({where: { id: tripId }})
 

@@ -1,16 +1,17 @@
 import { Router } from 'express'
 import { listTripsController, createTripController, getTripByIdController, updateTripController, deleteTripController } from '../modules/trip/trip.controller.js'
+import { protect } from '../middlewares/authMiddleware.js'
 
 const router = Router()
 
-router.post('/', createTripController)
+router.post('/', protect, createTripController)
 
-router.get('/', listTripsController)
+router.get('/', protect, listTripsController)
 
-router.get('/:id', getTripByIdController)
+router.get('/:id', protect, getTripByIdController)
 
-router.patch('/:id', updateTripController)
+router.patch('/:id', protect, updateTripController)
 
-router.delete('/:id', deleteTripController)
+router.delete('/:id', protect, deleteTripController)
 
 export const tripRouter = router
