@@ -1,7 +1,8 @@
+import { uploadImage } from '../lib/cloudinary.js'
 import { prisma } from '../lib/prisma.js'
 import { createEntrySchema, updateEntrySchema } from '../modules/entry/entry.schema.js'
 
-export const createEntry = async (input, userId) => {
+export const createEntry = async (input, userId, file) => {
   const result = createEntrySchema.safeParse(input)
 
   if (!result.success) {
@@ -15,8 +16,14 @@ export const createEntry = async (input, userId) => {
     throw new Error("Trip not found")
   }
 
+  let imageUrl = null
+
+  if(file){
+    imageUrl = await uploadImage(file.buffer)
+  }
+
   const newEntry = await prisma.entry.create({
-    data: {tripId: Number(tripId), content, date, title}
+    data: {tripId: Number(tripId), content, date, title, imageUrl: imageUrl}
   })
 
   return newEntry

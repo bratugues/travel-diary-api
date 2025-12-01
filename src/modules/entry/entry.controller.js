@@ -3,10 +3,11 @@ import { createEntry, deleteEntry, getEntryById, listEntriesByTripId, updateEntr
 export const createEntryController = async (req, res, next) => {
   const tripId = Number(req.params.tripId)
   const data = req.body
+  const file = req.file
   const userId = req.userId
 
   try {
-    const newEntry = await createEntry({...data, tripId}, userId)
+    const newEntry = await createEntry({...data, tripId}, userId, file)
     return res.status(201).json(newEntry)
   } catch (error) {
     next(error)
