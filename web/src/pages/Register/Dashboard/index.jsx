@@ -6,6 +6,13 @@ import { api } from "../../../services/api"
 export function Dashboard() {
 
   const [trips, setTrips] = useState([])
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [newTrip, setNewTrip] = useState({
+    title: '',
+    description: '',
+    startDate: '',
+    endDate: ''
+  })
 
   useEffect(() => {
     async function loadTrips() {
@@ -28,28 +35,38 @@ export function Dashboard() {
     loadTrips()
   }, [])
 
+  async function handleCreateTrip(e){
+    e.preventDefault()
+    const token = localStorage.getItem('token')
+
+    const response = await api.post('/trips', newTrip, { headers: { Authorization: `Bearer ${token}` } })
+
+    setTrips([...trips, response.data])
+    setIsModalOpen(false)
+    setNewTrip({title: '', description: '', startDate: '', endDate: ''})
+  }
 
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 relative">
       <Navbar/>
 
       <main className="max-w-7xl mx-auto px-4 py-8">
 
-        <div class="cabecalho" className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl font-bold text-gray-800">My trips</h2>
-          <button className="bg-blue-600 text-white rounded-lg px-4 py-2 hover:bg-blue-700 transition font-bold shadow-md">+ New Trip</button>
+          <button onClick={() => setIsModalOpen(true)} className="bg-blue-600 text-white rounded-lg px-4 py-2 hover:bg-blue-700 transition font-bold shadow-md">+ New Trip</button>
         </div>
 
-        <div class="grid" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {trips.map(trip =>
             <Link key={trip.id} to={`/trips/${trip.id}`} className="block">
-              <div class="card" className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
-                <div class="foto-da-viagem" className="h-48 bg-gray-200 w-full flex items-center justify-center text-gray-400">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
+                <div className="h-48 bg-gray-200 w-full flex items-center justify-center text-gray-400">
                   ✈️
                 </div>
 
-                <div class="card-content" className="p-4">
+                <div className="p-4">
                   <h3 className="font-bold text-lg text-gray-800">{trip.title}</h3>
                   <p className="text-sm text-gray-500 mt-1">{new Date(trip.startDate).toLocaleDateString()}</p>
                   {trip.description && (
@@ -63,6 +80,46 @@ export function Dashboard() {
           )}
         </div>
       </main>
+
+      {isModalOpen && (
+        <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50'>
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 m-4">
+            <h2 className="text-xl font-bold mb-4 text-gray-800">New Trip</h2>
+            <form onSubmit={handleCreateTrip} className='space-y-4'>
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">Title</label>
+                <input placeholder='Ex.: Paris 2025' className='w-full border rounded p-2' value={newTrip.title} onChange={e => setNewTrip({...newTrip, title: e.target.value})} />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">Description</label>
+                <input placeholder='Ex.: Trip to visit girlfriend' className='w-full border rounded p-2' value={newTrip.description} onChange={e => setNewTrip({...newTrip, description: e.target.value})} />
+              </div>
+              <div className='grid grid-cols-2 gap-4'>
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">Start</label>
+                  <input type='date' className='w-full border rounded p-2' value={newTrip.startDate} onChange={e => setNewTrip({...newTrip, startDate: e.target.value})} />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">End</label>
+                  <input type='date' className='w-full border rounded p-2' value={newTrip.endDate} onChange={e => setNewTrip({...newTrip, endDate: e.target.value})} />
+                </div>
+              </div>
+
+              <div className='flex justify-end gap-2 mt-6'>
+                <button type='button' className='px-4 py-2 text-gray-600 hover:bg-gray-100 rounded' onClick={() => setIsModalOpen(false)}>Cancel</button>
+                <button className='px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-bold' type='submit'>Create Trip</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+
+
+
+      )}
+
+
+
     </div>
   )
 }
