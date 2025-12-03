@@ -15,7 +15,7 @@ export function Login(){
     const response = await api.post('/auth/login', {email, password})
     const token = response.data.accessToken
     localStorage.setItem('token', token)
-    alert('Login successfull')
+    navigate('/dashboard')
   // eslint-disable-next-line no-unused-vars
   } catch (error) {
     alert('Error while logging in... Try again or register below')
