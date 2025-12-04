@@ -1,4 +1,4 @@
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 
 export function Navbar() {
   const navigate = useNavigate()
@@ -11,10 +11,12 @@ export function Navbar() {
   return (
     <nav className='bg-white shadow-sm border-b border-gray-200'>
       <div class='container' className='max-w-7xl mx-auto px-4 h-16 flex items-center justify-between'>
-        <div class='logo' className='flex items-center gap-2'>
-          <span className='text-2xl'>✈️</span>
-          <h1 className='text-xl font-bold text-blue-600'>My Travel Diary</h1>
-        </div>
+        <Link to='/dashboard'>
+          <div class='logo' className='flex items-center gap-2'>
+            <span className='text-2xl'>✈️</span>
+            <h1 className='text-xl font-bold text-blue-600'>My Travel Diary</h1>
+          </div>
+        </Link>
         <button onClick={handleLogout} className='text-gray-500 hover:text-red-600 font-medium transition-colors'>Logout</button>
       </div>
     </nav>
