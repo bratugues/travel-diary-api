@@ -70,7 +70,7 @@ export function TripDetails() {
     if (!isConfirm) return;
     try {
       await api.delete(`/entries/${id}`)
-      setEntries(prevState => prevState.filter(entry => entry.id != id))
+      setEntries(prevState => prevState.filter(entry => entry.id !== id))
     } catch (error) {
       console.error(error)
       alert('Error deleting entry')

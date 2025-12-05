@@ -46,6 +46,21 @@ export function Dashboard() {
     setNewTrip({title: '', description: '', startDate: '', endDate: ''})
   }
 
+  async function handleDeleteTrip(e, id){
+    e.preventDefault()
+    e.stopPropagation()
+
+    const isConfirmed = window.confirm('Are you sure you want to delete this trip?')
+    if(!isConfirmed) return
+
+    try {
+      await api.delete(`trips/${id}`)
+      setTrips(prevState => prevState.filter(trip => trip.id !== id))
+    } catch (error) {
+      console.error(error)
+      alert('Error while deleting trip...')
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 relative">
@@ -60,10 +75,11 @@ export function Dashboard() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {trips.map(trip =>
-            <Link key={trip.id} to={`/trips/${trip.id}`} className="block">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
+            <Link key={trip.id} to={`/trips/${trip.id}`} className="block group">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition relative">
+              <button onClick={(e) => handleDeleteTrip(e, trip.id)} className="absolute top-1 right-1 text-black-300 hover:text-red-500 transition z-10 p-2" title="Delete Trip">ⅹ</button>
                 <div className="h-48 bg-gray-200 w-full flex items-center justify-center text-gray-400">
-                  ✈️
+                  <div>✈️</div>
                 </div>
 
                 <div className="p-4">
