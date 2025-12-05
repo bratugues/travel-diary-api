@@ -18,11 +18,10 @@ export function TripDetails() {
 
   useEffect(() => {
     async function loadData() {
-      const token = localStorage.getItem('token')
       try {
         const [tripResponse, entriesResponse] = await Promise.all([
-          await api.get(`/trips/${tripId}`, {headers: {Authorization: `Bearer ${token}`}}),
-          await api.get(`/trips/${tripId}/entries`, {headers: {Authorization: `Bearer ${token}`}})
+          await api.get(`/trips/${tripId}`),
+          await api.get(`/trips/${tripId}/entries`)
         ])
 
         setTrip(tripResponse.data)
@@ -39,7 +38,6 @@ export function TripDetails() {
 
   async function handleCreateEntry(e){
     e.preventDefault()
-    const token = localStorage.getItem('token')
     const data = new FormData()
 
     data.append('title', newEntryTitle)
@@ -51,7 +49,7 @@ export function TripDetails() {
     }
 
     try {
-      await api.post(`/trips/${tripId}/entries`, data, {headers: {Authorization: `Bearer ${token}`}})
+      await api.post(`/trips/${tripId}/entries`, data)
       alert('Entry created successfully!')
       setIsModalOpen(false)
       setNewEntryTitle('')
@@ -67,6 +65,17 @@ export function TripDetails() {
     }
   }
 
+  async function handleDeleteEntry(id){
+    const isConfirm = window.confirm('Are you sure you want to delete this memory forever?')
+    if (!isConfirm) return;
+    try {
+      await api.delete(`/entries/${id}`)
+      setEntries(prevState => prevState.filter(entry => entry.id != id))
+    } catch (error) {
+      console.error(error)
+      alert('Error deleting entry')
+    }
+  }
   function handleFileChange(e){
     const file = e.target.files[0]
     if(file){
@@ -148,6 +157,7 @@ export function TripDetails() {
                   <span className="text-sm text-blue-600 font-medium">
                     {new Date(entry.date).toLocaleDateString()}
                   </span>
+                  <button title='delete memory' onClick={() => handleDeleteEntry(entry.id)}>🗑️</button>
                 </div>
 
                 <h3 className="text-xl font-bold text-gray-800 mb-2">{entry.title}</h3>
@@ -254,7 +264,7 @@ export function TripDetails() {
           </div>
         </div>
       )}
-      
+
     </div>
   )
 }
