@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Navbar } from "../../../components/navbar"
 import { api } from "../../../services/api"
+import { toast } from 'sonner'
 
 export function Dashboard() {
 
@@ -40,6 +41,7 @@ export function Dashboard() {
     const token = localStorage.getItem('token')
 
     const response = await api.post('/trips', newTrip, { headers: { Authorization: `Bearer ${token}` } })
+    toast.success('Trip created successfully!')
 
     setTrips([...trips, response.data])
     setIsModalOpen(false)
@@ -55,10 +57,11 @@ export function Dashboard() {
 
     try {
       await api.delete(`trips/${id}`)
+      toast.success('Trip deleted successfully!')
       setTrips(prevState => prevState.filter(trip => trip.id !== id))
     } catch (error) {
       console.error(error)
-      alert('Error while deleting trip...')
+      toast.error('Error while deleting trip...')
     }
   }
 

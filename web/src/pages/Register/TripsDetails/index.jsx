@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Navbar } from '../../../components/navbar'
 import { api } from '../../../services/api'
+import { toast } from 'sonner'
 
 export function TripDetails() {
   const { tripId } = useParams()
@@ -49,8 +50,8 @@ export function TripDetails() {
     }
 
     try {
-      await api.post(`/trips/${tripId}/entries`, data)
-      alert('Entry created successfully!')
+      const response = await api.post(`/trips/${tripId}/entries`, data)
+      toast.success('Entry created successfully!')
       setIsModalOpen(false)
       setNewEntryTitle('')
       setNewEntryContent('')
@@ -58,10 +59,10 @@ export function TripDetails() {
       setNewEntryImage(null)
       setPreviewImage(null)
 
-      window.location.reload()
+      setEntries(prevState => [response.data, ...prevState])
     } catch (error) {
       console.error(error)
-      alert('Error creating entry')
+      toast.error('Error creating entry')
     }
   }
 
@@ -71,6 +72,7 @@ export function TripDetails() {
     try {
       await api.delete(`/entries/${id}`)
       setEntries(prevState => prevState.filter(entry => entry.id !== id))
+      toast.success('Entry deleted successfully!')
     } catch (error) {
       console.error(error)
       alert('Error deleting entry')

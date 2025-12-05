@@ -4,11 +4,12 @@ import { Login } from './pages/Register/Login'
 import { Dashboard } from './pages/Register/Dashboard'
 import { PrivateRoute } from './components/PrivateRoute'
 import { TripDetails } from './pages/Register/TripsDetails'
+import { Toaster } from 'sonner'
 
 function App() {
   return (
     <BrowserRouter>
-
+      <Toaster richColors position='top-right' />
       <Routes>
 
         <Route path="/login" element={<Login />} />
