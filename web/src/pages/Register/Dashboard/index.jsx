@@ -14,17 +14,12 @@ export function Dashboard() {
     startDate: '',
     endDate: ''
   })
+  const [search, setSearch] = useState('')
 
   useEffect(() => {
     async function loadTrips() {
-      const token = localStorage.getItem('token')
-
       try {
-        const response = await api.get('/trips', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        })
+        const response = await api.get('/trips')
 
         setTrips(response.data)
       // eslint-disable-next-line no-unused-vars
@@ -38,9 +33,8 @@ export function Dashboard() {
 
   async function handleCreateTrip(e){
     e.preventDefault()
-    const token = localStorage.getItem('token')
 
-    const response = await api.post('/trips', newTrip, { headers: { Authorization: `Bearer ${token}` } })
+    const response = await api.post('/trips', newTrip)
     toast.success('Trip created successfully!')
 
     setTrips([...trips, response.data])
@@ -65,6 +59,7 @@ export function Dashboard() {
     }
   }
 
+  const filteredTrips = trips.filter(trip => trip.title.toLowerCase().includes(search.toLowerCase()))
   return (
     <div className="min-h-screen bg-gray-50 relative">
       <Navbar/>
@@ -76,8 +71,17 @@ export function Dashboard() {
           <button onClick={() => setIsModalOpen(true)} className="bg-blue-600 text-white rounded-lg px-4 py-2 hover:bg-blue-700 transition font-bold shadow-md">+ New Trip</button>
         </div>
 
+        <div className="mb-6">
+          <input
+            type="text"
+            placeholder="Search for a trip..."
+            className="w-full p-3 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 outline-none transition"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}/>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {trips.map(trip =>
+          {filteredTrips.map(trip =>
             <Link key={trip.id} to={`/trips/${trip.id}`} className="block group">
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition relative">
               <button onClick={(e) => handleDeleteTrip(e, trip.id)} className="absolute top-1 right-1 text-black-300 hover:text-red-500 transition z-10 p-2" title="Delete Trip">ⅹ</button>
