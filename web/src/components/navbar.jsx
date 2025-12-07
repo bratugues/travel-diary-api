@@ -1,10 +1,12 @@
 import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 
 export function Navbar() {
   const navigate = useNavigate()
 
   function handleLogout(){
     localStorage.removeItem('token')
+    toast.success('See you soon!')
     navigate('/login')
   }
 
