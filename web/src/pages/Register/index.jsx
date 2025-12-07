@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { api } from '../../services/api'
+import { toast } from 'sonner'
 
 export function Register() {
 
@@ -18,8 +19,7 @@ export function Register() {
         email,
         password
       })
-
-      alert('Registered Successfully!')
+      toast.success('Registered Successfully!')
       navigate('/login')
     // eslint-disable-next-line no-unused-vars
     } catch(error) {
