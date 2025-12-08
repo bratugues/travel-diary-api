@@ -15,6 +15,8 @@ export function Dashboard() {
     endDate: ''
   })
   const [search, setSearch] = useState('')
+  const [tripImage, setTripImage] = useState(null)
+  const [previewTripImage, setPreviewTripImage] = useState(null)
 
   useEffect(() => {
     async function loadTrips() {
@@ -34,12 +36,27 @@ export function Dashboard() {
   async function handleCreateTrip(e){
     e.preventDefault()
 
-    const response = await api.post('/trips', newTrip)
+    const data = new FormData()
+    data.append('title', newTrip.title)
+    data.append('content', newTrip.content)
+    data.append('startDate', newTrip.startDate)
+    data.append('endDate', newTrip.endDate)
+
+    if(newTrip.description){
+      data.append('description', newTrip.description)
+    }
+
+    if(tripImage){
+      data.append('image', tripImage)
+    }
+    const response = await api.post('/trips', data)
     toast.success('Trip created successfully!')
 
     setTrips([...trips, response.data])
     setIsModalOpen(false)
     setNewTrip({title: '', description: '', startDate: '', endDate: ''})
+    setTripImage(null)
+    setPreviewTripImage(null)
   }
 
   async function handleDeleteTrip(e, id){
@@ -59,6 +76,13 @@ export function Dashboard() {
     }
   }
 
+  async function handleTripFileChange(e){
+    const file = e.target.files[0]
+    if(file){
+      setTripImage(file)
+      setPreviewTripImage(URL.createObjectURL(file))
+    }
+  }
   const filteredTrips = trips.filter(trip => trip.title.toLowerCase().includes(search.toLowerCase()))
   return (
     <div className="min-h-screen bg-gray-50 relative">
@@ -96,8 +120,9 @@ export function Dashboard() {
             <Link key={trip.id} to={`/trips/${trip.id}`} className="block group">
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition relative">
               <button onClick={(e) => handleDeleteTrip(e, trip.id)} className="absolute top-1 right-1 text-black-300 hover:text-red-500 transition z-10 p-2" title="Delete Trip">ⅹ</button>
-                <div className="h-48 bg-gray-200 w-full flex items-center justify-center text-gray-400">
-                  <div>✈️</div>
+                <div className="h-48 bg-gray-200 w-full flex items-center justify-center text-gray-400 relative">
+                  <img src={trip.imageUrl || "/default_trip.jpg"} alt={trip.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                  {!trip.imageUrl && <div className="absolute inset-0 bg-black/10"></div>}
                 </div>
 
                 <div className="p-4">
@@ -136,6 +161,29 @@ export function Dashboard() {
                 <div>
                   <label className="block text-sm text-gray-600 mb-1">End</label>
                   <input type='date' className='w-full border rounded p-2' value={newTrip.endDate} onChange={e => setNewTrip({...newTrip, endDate: e.target.value})} />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Cover Image (Optional)</label>
+
+                  <div className="flex items-center gap-4">
+                    <label className="cursor-pointer bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-lg transition flex items-center gap-2 text-sm font-medium">
+                      📷 Upload Cover
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={handleTripFileChange}
+                      />
+                    </label>
+
+                    {previewTripImage ? (
+                      <div className="h-12 w-20 rounded overflow-hidden border border-gray-200">
+                        <img src={previewTripImage} className="w-full h-full object-cover" />
+                      </div>
+                    ) : (
+                      <span className="text-xs text-gray-400">No image selected</span>
+                    )}
+                  </div>
                 </div>
               </div>
 

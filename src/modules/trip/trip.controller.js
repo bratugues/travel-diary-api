@@ -2,9 +2,10 @@ import { createTrip, deleteTrip, getTripById, listTrips, updateTrip } from "../.
 
 export const createTripController = async (req, res, next) => {
   const input = req.body
+  const file = req.file
   const userId = req.userId
   try {
-    const newTrip = await createTrip(userId, input)
+    const newTrip = await createTrip(userId, input, file)
     return res.status(201).json(newTrip)
   } catch (error) {
     next(error)

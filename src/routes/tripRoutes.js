@@ -1,10 +1,11 @@
 import { Router } from 'express'
 import { listTripsController, createTripController, getTripByIdController, updateTripController, deleteTripController } from '../modules/trip/trip.controller.js'
 import { protect } from '../middlewares/authMiddleware.js'
+import { upload } from '../middlewares/uploadMiddleware.js'
 
 const router = Router()
 
-router.post('/', protect, createTripController)
+router.post('/', protect, upload.single('image'), createTripController)
 
 router.get('/', protect, listTripsController)
 
