@@ -15,6 +15,7 @@ export function TripDetails() {
   const [newEntryDate, setNewEntryDate] = useState('')
   const [newEntryImage, setNewEntryImage] = useState(null)
   const [previewImage, setPreviewImage] = useState(null)
+  const [editingEntry, setEditingEntry] = useState(null)
 
 
   useEffect(() => {
@@ -37,29 +38,38 @@ export function TripDetails() {
     loadData()
   }, [tripId])
 
-  async function handleCreateEntry(e){
+  async function handleSaveEntry(e){
     e.preventDefault()
     const data = new FormData()
 
     data.append('title', newEntryTitle)
     data.append('content', newEntryContent)
-    data.append('date', newEntryDate)
+    data.append('date', new Date(newEntryDate).toISOString())
 
     if(newEntryImage){
       data.append('image', newEntryImage)
     }
 
     try {
-      const response = await api.post(`/trips/${tripId}/entries`, data)
-      toast.success('Entry created successfully!')
-      setIsModalOpen(false)
-      setNewEntryTitle('')
-      setNewEntryContent('')
-      setNewEntryDate('')
-      setNewEntryImage(null)
-      setPreviewImage(null)
+      if(editingEntry){
+        await api.patch(`/entries/${editingEntry.id}`,{
+          title: newEntryTitle,
+          content: newEntryContent,
+          date: new Date(newEntryDate)
+        })
 
-      setEntries(prevState => [response.data, ...prevState])
+        toast.success('Entry updated!')
+
+        setEntries(prev => prev.map(item =>
+          item.id === editingEntry.id ? {...item, title: newEntryTitle, content: newEntryContent, date: newEntryDate, imageUrl: previewImage} : item
+        ))
+      } else{
+        const response = await api.post(`/trips/${tripId}/entries`, data)
+        toast.success('Entry created successfully!')
+        setEntries(prevState => [response.data, ...prevState])
+      }
+
+      handleCloseModal()
     } catch (error) {
       console.error(error)
       toast.error('Error creating entry')
@@ -94,6 +104,34 @@ export function TripDetails() {
         </div>
       </div>
     )
+  }
+
+  function handleOpenEditModal(entry){
+    setEditingEntry(entry)
+    setNewEntryTitle(entry.title || '')
+    setNewEntryContent(entry.content || '')
+
+    if(entry.date){
+      setNewEntryDate(entry.date.slice(0, 10))
+    }
+
+    if(entry.imageUrl){
+      setPreviewImage(entry.imageUrl)
+    } else {
+      setPreviewImage(null)
+    }
+
+    setIsModalOpen(true)
+  }
+
+  function handleCloseModal(){
+    setIsModalOpen(false)
+    setEditingEntry(null)
+    setNewEntryTitle('')
+    setNewEntryContent('')
+    setNewEntryDate('')
+    setNewEntryImage(null)
+    setPreviewImage(null)
   }
 
   return (
@@ -159,7 +197,10 @@ export function TripDetails() {
                   <span className="text-sm text-blue-600 font-medium">
                     {new Date(entry.date).toLocaleDateString()}
                   </span>
+                  <div className='flex gap-2'>
+                    <button onClick={() => handleOpenEditModal(entry)} className="text-blue-400 hover:text-blue-600 transition" title="Edit memory"> ✏️ </button>
                   <button title='delete memory' onClick={() => handleDeleteEntry(entry.id)}>🗑️</button>
+                  </div>
                 </div>
 
                 <h3 className="text-xl font-bold text-gray-800 mb-2">{entry.title}</h3>
@@ -177,16 +218,16 @@ export function TripDetails() {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden animate-fade-in">
             <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-              <h2 className="text-xl font-bold text-gray-800">New Memory</h2>
+              <h2 className="text-xl font-bold text-gray-800">{editingEntry ? 'Edit entry' : 'New Entry'}</h2>
               <button
-                onClick={() => setIsModalOpen(false)}
+                onClick={handleCloseModal}
                 className="text-gray-400 hover:text-gray-600 transition"
               >
                 ✕
               </button>
             </div>
 
-            <form onSubmit={handleCreateEntry} className="p-6 space-y-4">
+            <form onSubmit={handleSaveEntry} className="p-6 space-y-4">
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
@@ -249,7 +290,7 @@ export function TripDetails() {
               <div className="pt-4 flex justify-end gap-3">
                 <button
                   type="button"
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={handleCloseModal}
                   className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition font-medium"
                 >
                   Cancel
@@ -258,7 +299,7 @@ export function TripDetails() {
                   type="submit"
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-bold shadow-sm"
                 >
-                  Save Entry
+                  {editingEntry ? 'Save Entry' : 'Create Entry'}
                 </button>
               </div>
 
