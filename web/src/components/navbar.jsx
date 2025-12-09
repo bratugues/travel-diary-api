@@ -19,7 +19,10 @@ export function Navbar() {
             <h1 className='text-xl font-bold text-blue-600'>My Travel Diary</h1>
           </div>
         </Link>
+        <div className='flex gap-4'>
+        <button onClick={() => navigate('/trips/favorites')} className='text-gray-500 hover:text-yellow-600 font-medium transition-colors'>Favorites</button>
         <button onClick={handleLogout} className='text-gray-500 hover:text-red-600 font-medium transition-colors'>Logout</button>
+        </div>
       </div>
     </nav>
   )

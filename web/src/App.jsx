@@ -4,6 +4,7 @@ import { Login } from './pages/Register/Login'
 import { Dashboard } from './pages/Register/Dashboard'
 import { PrivateRoute } from './components/PrivateRoute'
 import { TripDetails } from './pages/Register/TripsDetails'
+import { Favorites } from './pages/Favorites'
 import { Toaster } from 'sonner'
 
 function App() {
@@ -17,6 +18,11 @@ function App() {
         <Route path="/dashboard" element={
           <PrivateRoute>
             <Dashboard/>
+          </PrivateRoute>
+        }/>
+        <Route path="/trips/favorites" element={
+          <PrivateRoute>
+            <Favorites/>
           </PrivateRoute>
         }/>
         <Route path="/trips/:tripId" element={

@@ -70,3 +70,9 @@ export const deleteTrip = async (id, userId) => {
 
   return deleteTrip
 }
+
+export const listFavoriteTrips = async (userId) => {
+  const favoriteTrips = await prisma.trip.findMany({where: {isFavorite: true, userId}})
+
+  return favoriteTrips
+}

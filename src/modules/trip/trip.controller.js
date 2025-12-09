@@ -1,4 +1,4 @@
-import { createTrip, deleteTrip, getTripById, listTrips, updateTrip } from "../../services/tripService.js"
+import { createTrip, deleteTrip, getTripById, listTrips, updateTrip, listFavoriteTrips } from "../../services/tripService.js"
 
 export const createTripController = async (req, res, next) => {
   const input = req.body
@@ -51,6 +51,16 @@ export const deleteTripController = async (req, res, next) => {
   try {
     const deletedTrip = await deleteTrip(id, userId)
     return res.json(deletedTrip)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const listFavoriteTripsController = async (req, res, next) => {
+  try {
+    const userId = req.userId
+    const favoriteTrips = await listFavoriteTrips(userId)
+    return res.json(favoriteTrips)
   } catch (error) {
     next(error)
   }
