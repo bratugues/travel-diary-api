@@ -1,4 +1,5 @@
 import { createTrip, deleteTrip, getTripById, listTrips, updateTrip, listFavoriteTrips } from "../../services/tripService.js"
+import { uploadImage } from "../../lib/cloudinary.js"
 
 export const createTripController = async (req, res, next) => {
   const input = req.body
@@ -35,8 +36,14 @@ export const getTripByIdController = async (req, res, next) => {
 
 export const updateTripController = async (req, res, next) => {
   const { id } = req.params
-  const input = req.body
+  let input = req.body
   const userId = req.userId
+  const file = req.file
+
+  if(file){
+    input = {...input, imageUrl: await uploadImage(file.buffer)}
+  }
+
   try {
     const updatedTrip = await updateTrip(id, input, userId)
     return res.json(updatedTrip)

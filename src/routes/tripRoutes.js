@@ -9,11 +9,11 @@ router.post('/', protect, upload.single('image'), createTripController)
 
 router.get('/', protect, listTripsController)
 
-router.get('/favorites', protect, listFavoriteTripsController)
+router.get('/favorites', protect, upload.single('image'), listFavoriteTripsController)
 
 router.get('/:id', protect, getTripByIdController)
 
-router.patch('/:id', protect, updateTripController)
+router.patch('/:id', protect, upload.single('image'), updateTripController)
 
 router.delete('/:id', protect, deleteTripController)
 

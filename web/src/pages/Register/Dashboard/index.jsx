@@ -18,6 +18,8 @@ export function Dashboard() {
   const [search, setSearch] = useState('')
   const [tripImage, setTripImage] = useState(null)
   const [previewTripImage, setPreviewTripImage] = useState(null)
+  const [isEditingId, setIsEditingId] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     async function loadTrips() {
@@ -25,6 +27,7 @@ export function Dashboard() {
         const response = await api.get('/trips')
 
         setTrips(response.data)
+        setIsLoading(false)
       // eslint-disable-next-line no-unused-vars
       } catch (error) {
         alert('Error while loading trips...')
@@ -34,7 +37,18 @@ export function Dashboard() {
     loadTrips()
   }, [])
 
-  async function handleCreateTrip(e){
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="flex items-center justify-center h-[calc(100vh-64px)]">
+          <p className="text-gray-500 text-xl animate-pulse">Loading trips...</p>
+        </div>
+      </div>
+    )
+  }
+
+  async function handleSaveTrip(e){
     e.preventDefault()
 
     const data = new FormData()
@@ -50,14 +64,35 @@ export function Dashboard() {
     if(tripImage){
       data.append('image', tripImage)
     }
-    const response = await api.post('/trips', data)
-    toast.success('Trip created successfully!')
+    try {
+      if (isEditingId) {
+        const response = await api.patch(`/trips/${isEditingId}`, data)
+        setTrips(prev => prev.map(t => t.id === isEditingId ? response.data : t))
+        toast.success('Trip updated!')
+      } else{
+        const response = await api.post('/trips', data)
+        setTrips([...trips, response.data])
+        toast.success('Trip created successfully!')
+      }
 
-    setTrips([...trips, response.data])
-    setIsModalOpen(false)
-    setNewTrip({title: '', description: '', startDate: '', endDate: ''})
-    setTripImage(null)
-    setPreviewTripImage(null)
+      handleCloseModal()
+    } catch (error) {
+      console.log(error)
+      toast.error("Error while saving")
+    }
+  }
+
+  async function handleEditTrip(trip){
+    setIsEditingId(trip.id)
+
+    setNewTrip({
+      title: trip.title,
+      description: trip.description || '',
+      startDate: trip.startDate.split('T')[0],
+      endDate: trip.endDate.split('T')[0],
+    })
+
+    setIsModalOpen(true)
   }
 
   async function handleDeleteTrip(e, id){
@@ -99,6 +134,14 @@ export function Dashboard() {
     }
 
   }
+
+  async function handleCloseModal(){
+    setIsModalOpen(false)
+    setNewTrip({title: '', description: '', startDate: '', endDate: ''})
+    setTripImage(null)
+    setPreviewTripImage(null)
+    setIsEditingId(null)
+  }
   const filteredTrips = trips.filter(trip => trip.title.toLowerCase().includes(search.toLowerCase()))
   return (
     <div className="min-h-screen bg-gray-50 relative">
@@ -135,14 +178,15 @@ export function Dashboard() {
           trips={filteredTrips}            // 1. Passa a funcao filtrada;
           onDelete={handleDeleteTrip}      // 2. Passa a função sem executar;
           onFavorite={toggleFavorite}      // 3. Passa a função sem executar;
+          onEdit={handleEditTrip}          // 4. Passa a função sem executar;
         />
       </main>
 
       {isModalOpen && (
         <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50'>
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 m-4">
-            <h2 className="text-xl font-bold mb-4 text-gray-800">New Trip</h2>
-            <form onSubmit={handleCreateTrip} className='space-y-4'>
+            <h2 className="text-xl font-bold mb-4 text-gray-800">{isEditingId ? 'Update trip' : 'New Trip'}</h2>
+            <form onSubmit={handleSaveTrip} className='space-y-4'>
               <div>
                 <label className="block text-sm text-gray-600 mb-1">Title</label>
                 <input placeholder='Ex.: Paris 2025' className='w-full border rounded p-2' value={newTrip.title} onChange={e => setNewTrip({...newTrip, title: e.target.value})} />
@@ -186,8 +230,8 @@ export function Dashboard() {
               </div>
 
               <div className='flex justify-end gap-2 mt-6'>
-                <button type='button' className='px-4 py-2 text-gray-600 hover:bg-gray-100 rounded' onClick={() => setIsModalOpen(false)}>Cancel</button>
-                <button className='px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-bold' type='submit'>Create Trip</button>
+                <button type='button' className='px-4 py-2 text-gray-600 hover:bg-gray-100 rounded' onClick={(handleCloseModal)}>Cancel</button>
+                <button className='px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-bold' type='submit'>{isEditingId ? 'Update trip' : 'Create trip'}</button>
               </div>
             </form>
           </div>
