@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Navbar } from "../../../components/navbar"
 import { api } from "../../../services/api"
 import { toast } from 'sonner'
+import { TripList } from '../../../components/TripList'
 
 export function Dashboard() {
 
@@ -130,30 +131,11 @@ export function Dashboard() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredTrips.map(trip =>
-            <Link key={trip.id} to={`/trips/${trip.id}`} className="block group">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition relative">
-              <button onClick={(e) => handleDeleteTrip(e, trip.id)} className="absolute top-1 right-1 text-black-300 hover:text-red-500 transition z-10 p-2" title="Delete Trip">ⅹ</button>
-              <button onClick={(e) => toggleFavorite(e, trip)} className={`absolute top-1 left-1 ${trip.isFavorite ? 'text-yellow-400' : 'text-gray-300 hover:text-yellow-200'} transition z-10 p-2`} title="Favorite Trip">★</button>
-                <div className="h-48 bg-gray-200 w-full flex items-center justify-center text-gray-400 relative">
-                  <img src={trip.imageUrl || "/default-trip.jpg"} alt={trip.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                  {!trip.imageUrl && <div className="absolute inset-0 bg-black/10"></div>}
-                </div>
-
-                <div className="p-4">
-                  <h3 className="font-bold text-lg text-gray-800">{trip.title}</h3>
-                  <p className="text-sm text-gray-500 mt-1">{new Date(trip.startDate).toLocaleDateString()}</p>
-                  {trip.description && (
-                    <p className="text-gray-600 mt-3 text-sm line-clamp-2">
-                      {trip.description}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </Link>
-          )}
-        </div>
+        <TripList
+          trips={filteredTrips}            // 1. Passa a funcao filtrada;
+          onDelete={handleDeleteTrip}      // 2. Passa a função sem executar;
+          onFavorite={toggleFavorite}      // 3. Passa a função sem executar;
+        />
       </main>
 
       {isModalOpen && (
