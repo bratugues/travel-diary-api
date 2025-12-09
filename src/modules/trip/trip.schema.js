@@ -11,5 +11,6 @@ export const updateTripSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
   startDate: z.coerce.date().optional(),
-  endDate: z.coerce.date().optional()
+  endDate: z.coerce.date().optional(),
+  isFavorite: z.boolean().optional()
 })

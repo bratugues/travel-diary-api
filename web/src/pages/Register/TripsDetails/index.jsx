@@ -117,7 +117,7 @@ export function TripDetails() {
 
     if(entry.imageUrl){
       setPreviewImage(entry.imageUrl)
-    } else {
+    } else{
       setPreviewImage(null)
     }
 

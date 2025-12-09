@@ -83,6 +83,21 @@ export function Dashboard() {
       setPreviewTripImage(URL.createObjectURL(file))
     }
   }
+
+  async function toggleFavorite(e, trip) {
+    e.preventDefault()
+    e.stopPropagation()
+    const newValue = !trip.isFavorite
+
+    setTrips(prevState => prevState.map(t => t.id === trip.id ? {...t, isFavorite: newValue} : t))
+    try {
+      await api.patch(`/trips/${trip.id}`, {isFavorite: newValue})
+    } catch (error) {
+      console.log('Error while adding to favorite', error)
+      setTrips(prevState => prevState.map(t => t.id === trip.id ? {...t, isFavorite: !newValue} : t))
+    }
+
+  }
   const filteredTrips = trips.filter(trip => trip.title.toLowerCase().includes(search.toLowerCase()))
   return (
     <div className="min-h-screen bg-gray-50 relative">
@@ -120,8 +135,9 @@ export function Dashboard() {
             <Link key={trip.id} to={`/trips/${trip.id}`} className="block group">
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition relative">
               <button onClick={(e) => handleDeleteTrip(e, trip.id)} className="absolute top-1 right-1 text-black-300 hover:text-red-500 transition z-10 p-2" title="Delete Trip">ⅹ</button>
+              <button onClick={(e) => toggleFavorite(e, trip)} className={`absolute top-1 left-1 ${trip.isFavorite ? 'text-yellow-400' : 'text-gray-300 hover:text-yellow-200'} transition z-10 p-2`} title="Favorite Trip">★</button>
                 <div className="h-48 bg-gray-200 w-full flex items-center justify-center text-gray-400 relative">
-                  <img src={trip.imageUrl || "/default_trip.jpg"} alt={trip.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                  <img src={trip.imageUrl || "/default-trip.jpg"} alt={trip.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                   {!trip.imageUrl && <div className="absolute inset-0 bg-black/10"></div>}
                 </div>
 
