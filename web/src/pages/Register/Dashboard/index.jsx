@@ -25,10 +25,9 @@ export function Dashboard() {
     async function loadTrips() {
       try {
         const response = await api.get('/trips')
-
         setTrips(response.data)
-      // eslint-disable-next-line no-unused-vars
       } catch (error) {
+        console.error(error)
         alert('Error while loading trips...')
       } finally {
         setIsLoading(false)
@@ -164,7 +163,13 @@ export function Dashboard() {
             onChange={(e) => setSearch(e.target.value)}/>
         </div>
 
-        {filteredTrips.length === 0 && (
+        {isLoading && (
+          <div className="flex items-center justify-center py-20">
+          <p className="text-gray-500 text-xl animate-pulse">Loading trips... 🌍</p>
+          </div>
+        )}
+
+        {!isLoading && filteredTrips.length === 0 && (
           <div className="text-center py-10 bg-white rounded-xl border border-dashed border-gray-300">
             <p className="text-gray-500 text-lg">
               {search ? `No trips found matching "${search}"` : "You haven't created any trips yet."}
@@ -175,12 +180,13 @@ export function Dashboard() {
           </div>
         )}
 
+        {!isLoading && filteredTrips.length > 0 &&
         <TripList
           trips={filteredTrips}            // 1. Passa a funcao filtrada;
           onDelete={handleDeleteTrip}      // 2. Passa a função sem executar;
           onFavorite={toggleFavorite}      // 3. Passa a função sem executar;
           onEdit={handleEditTrip}          // 4. Passa a função sem executar;
-        />
+        />}
       </main>
 
       {isModalOpen && (
