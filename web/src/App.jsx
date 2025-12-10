@@ -6,6 +6,7 @@ import { PrivateRoute } from './components/PrivateRoute'
 import { TripDetails } from './pages/Register/TripsDetails'
 import { Favorites } from './pages/Favorites'
 import { Toaster } from 'sonner'
+import { NotFound } from './components/notFound'
 
 function App() {
   return (
@@ -30,7 +31,7 @@ function App() {
             <TripDetails />
           </PrivateRoute>
         }/>
-        <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="*" element={<NotFound/>} />
 
       </Routes>
 

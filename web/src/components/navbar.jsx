@@ -1,4 +1,4 @@
-import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
 export function Navbar() {
@@ -12,7 +12,7 @@ export function Navbar() {
 
   return (
     <nav className='bg-white shadow-sm border-b border-gray-200'>
-      <div class='container' className='max-w-7xl mx-auto px-4 h-16 flex items-center justify-between'>
+      <div className='max-w-7xl mx-auto px-4 h-16 flex items-center justify-between'>
         <Link to='/dashboard'>
           <div class='logo' className='flex items-center gap-2'>
             <span className='text-2xl'>✈️</span>
