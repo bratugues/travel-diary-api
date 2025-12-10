@@ -29,8 +29,20 @@ export const createTrip = async (userId, input, file) => {
   return trip
 }
 
-export const listTrips = async (userId) => {
-  const trips = await prisma.trip.findMany({where: { userId: userId }, orderBy: {createdAt: 'desc'}})
+export const listTrips = async (userId, search) => {
+  const where = {userId: userId}
+
+  if(search){
+    where.OR = [
+      {
+        title: { contains: search }
+      },
+      {
+        description: { contains: search }
+      }
+    ]
+  }
+  const trips = await prisma.trip.findMany({where: where , orderBy: {createdAt: 'desc'}})
   return trips
 }
 

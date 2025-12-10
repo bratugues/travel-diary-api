@@ -24,7 +24,7 @@ export function Dashboard() {
   useEffect(() => {
     async function loadTrips() {
       try {
-        const response = await api.get('/trips')
+        const response = await api.get(`/trips?search=${search}`)
         setTrips(response.data)
       } catch (error) {
         console.error(error)
@@ -35,7 +35,7 @@ export function Dashboard() {
     }
 
     loadTrips()
-  }, [])
+  }, [search])
 
   if (isLoading) {
     return (
@@ -142,7 +142,6 @@ export function Dashboard() {
     setPreviewTripImage(null)
     setIsEditingId(null)
   }
-  const filteredTrips = trips.filter(trip => trip.title.toLowerCase().includes(search.toLowerCase()))
   return (
     <div className="min-h-screen bg-gray-50 relative">
       <Navbar/>
@@ -169,7 +168,7 @@ export function Dashboard() {
           </div>
         )}
 
-        {!isLoading && filteredTrips.length === 0 && (
+        {!isLoading && trips.length === 0 && (
           <div className="text-center py-10 bg-white rounded-xl border border-dashed border-gray-300">
             <p className="text-gray-500 text-lg">
               {search ? `No trips found matching "${search}"` : "You haven't created any trips yet."}
@@ -180,9 +179,9 @@ export function Dashboard() {
           </div>
         )}
 
-        {!isLoading && filteredTrips.length > 0 &&
+        {!isLoading && trips.length > 0 &&
         <TripList
-          trips={filteredTrips}            // 1. Passa a funcao filtrada;
+          trips={trips}            // 1. Passa a funcao filtrada;
           onDelete={handleDeleteTrip}      // 2. Passa a função sem executar;
           onFavorite={toggleFavorite}      // 3. Passa a função sem executar;
           onEdit={handleEditTrip}          // 4. Passa a função sem executar;

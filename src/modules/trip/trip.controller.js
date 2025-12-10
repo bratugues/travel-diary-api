@@ -16,7 +16,8 @@ export const createTripController = async (req, res, next) => {
 export const listTripsController = async (req, res, next) => {
   try {
     const userId = req.userId
-    const trips = await listTrips(userId)
+    const { search } = req.query
+    const trips = await listTrips(userId, search)
     return res.json(trips)
   } catch (error) {
     next(error)
