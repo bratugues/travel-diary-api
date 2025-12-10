@@ -68,7 +68,7 @@ export const updateTrip = async (id, input, userId) => {
   if(!validateInput.success){
     throw validateInput.error
   }
-    const updatedTrip = await prisma.trip.update({where: {id: tripId}, data: validateInput.data})
+    const updatedTrip = await prisma.trip.update({where: {id: tripId, userId: userId}, data: validateInput.data})
     return updatedTrip
 }
 
@@ -78,7 +78,7 @@ export const deleteTrip = async (id, userId) => {
 
   await getTripById(tripId, userId)
 
-  const deleteTrip = await prisma.trip.delete({where: { id: tripId }})
+  const deleteTrip = await prisma.trip.delete({where: { id: tripId, userId: userId }})
 
   return deleteTrip
 }
