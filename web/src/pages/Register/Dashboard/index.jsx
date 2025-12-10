@@ -27,10 +27,11 @@ export function Dashboard() {
         const response = await api.get('/trips')
 
         setTrips(response.data)
-        setIsLoading(false)
       // eslint-disable-next-line no-unused-vars
       } catch (error) {
         alert('Error while loading trips...')
+      } finally {
+        setIsLoading(false)
       }
     }
 
