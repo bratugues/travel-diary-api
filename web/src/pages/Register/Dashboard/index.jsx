@@ -20,6 +20,7 @@ export function Dashboard() {
   const [previewTripImage, setPreviewTripImage] = useState(null)
   const [isEditingId, setIsEditingId] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
     async function loadTrips() {
@@ -51,6 +52,7 @@ export function Dashboard() {
   async function handleSaveTrip(e){
     e.preventDefault()
 
+    setIsSaving(true)
     const data = new FormData()
     data.append('title', newTrip.title)
     data.append('content', newTrip.content)
@@ -79,6 +81,8 @@ export function Dashboard() {
     } catch (error) {
       console.log(error)
       toast.error("Error while saving")
+    } finally {
+      setIsSaving(false)
     }
   }
 
@@ -237,7 +241,7 @@ export function Dashboard() {
 
               <div className='flex justify-end gap-2 mt-6'>
                 <button type='button' className='px-4 py-2 text-gray-600 hover:bg-gray-100 rounded' onClick={(handleCloseModal)}>Cancel</button>
-                <button className='px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-bold' type='submit'>{isEditingId ? 'Update trip' : 'Create trip'}</button>
+                <button className='px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-bold disabled:opacity-50 disabled:cursor-not-allowed' type='submit' disabled={isSaving}>{isSaving ? 'Saving...' : (isEditingId ? 'Update trip' : 'Create trip')}</button>
               </div>
             </form>
           </div>

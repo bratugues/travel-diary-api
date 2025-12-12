@@ -16,6 +16,7 @@ export function TripDetails() {
   const [newEntryImage, setNewEntryImage] = useState(null)
   const [previewImage, setPreviewImage] = useState(null)
   const [editingEntry, setEditingEntry] = useState(null)
+  const [isSaving, setIsSaving] = useState(false)
 
 
   useEffect(() => {
@@ -40,6 +41,7 @@ export function TripDetails() {
 
   async function handleSaveEntry(e){
     e.preventDefault()
+    setIsSaving(true)
     const data = new FormData()
 
     data.append('title', newEntryTitle)
@@ -73,6 +75,8 @@ export function TripDetails() {
     } catch (error) {
       console.error(error)
       toast.error('Error creating entry')
+    } finally{
+      setIsSaving(false)
     }
   }
 
@@ -297,9 +301,10 @@ export function TripDetails() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-bold shadow-sm"
+                  disabled={isSaving}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-bold shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {editingEntry ? 'Save Entry' : 'Create Entry'}
+                  {isSaving ? 'Saving...' : (editingEntry ? 'Save Entry' : 'Create Entry')}
                 </button>
               </div>
 
