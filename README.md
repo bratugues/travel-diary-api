@@ -12,7 +12,7 @@
 
 **Travel Diary** is a full-stack application designed to help users document, search, and favorite their travel adventures. It features a secure authentication system, image uploads, and an optimized backend search.
 
-🔗 **Live Demo:** travel-diary-api-two.vercel.app
+🔗 **Live Demo:** <a src="travel-diary-api-two.vercel.app">My Travel Diary</a>
 
 ### 🖼️ Screenshots
 <img width="2672" height="1170" alt="image" src="https://github.com/user-attachments/assets/c3a1fbc7-785e-439a-88fc-9a47d33bc64c" />
@@ -81,7 +81,7 @@ This project was built using the **PERN Stack** (Postgres, Express, React, Node)
 
 **Travel Diary** é uma aplicação Fullstack desenvolvida para ajudar usuários a documentar, buscar e favoritar suas aventuras de viagem. O projeto conta com sistema de autenticação seguro, upload de imagens e busca otimizada no backend.
 
-🔗 **Link do Projeto:** travel-diary-api-two.vercel.app
+🔗 **Link do Projeto:** <a src="travel-diary-api-two.vercel.app">My Travel Diary</a>
 
 ### 🛠 Tecnologias
 
