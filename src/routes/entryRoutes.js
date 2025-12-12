@@ -1,7 +1,7 @@
 import { Router } from 'express'
-import { deleteEntryController, createEntryController, updateEntryController, getEntryByIdController, listEntriesByTripIdController } from '../modules/entry/entry.controller'
-import { protect } from '../middlewares/authMiddleware'
-import { upload } from '../middlewares/uploadMiddleware'
+import { deleteEntryController, createEntryController, updateEntryController, getEntryByIdController, listEntriesByTripIdController } from '../modules/entry/entry.controller.js'
+import { protect } from '../middlewares/authMiddleware.js'
+import { upload } from '../middlewares/uploadMiddleware.js'
 
 
 const router = Router()
