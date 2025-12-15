@@ -7,6 +7,7 @@ import { TripDetails } from './pages/Register/TripsDetails'
 import { Favorites } from './pages/Favorites'
 import { Toaster } from 'sonner'
 import { NotFound } from './components/notFound'
+import { Home } from './pages/Home'
 
 function App() {
   return (
@@ -14,7 +15,7 @@ function App() {
       <Toaster richColors position='top-right' />
       <Routes>
 
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={

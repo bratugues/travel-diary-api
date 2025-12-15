@@ -29,8 +29,8 @@ export function Login(){
       <div className='bg-white shadow-md rounded-lg w-96 p-8'>
         <h2 className='text-center font-bold text-blue-600 text-2xl mb-6'>Login</h2>
         <form className='space-y-4' onSubmit={handleLogin}>
-          <input className='w-full border p-2 rounded' type="email" placeholder='e-mail' value={email} onChange={e => setEmail(e.target.value)} />
-          <input className='w-full border p-2 rounded' type="password" placeholder='password' value={password} onChange={e => setPassword(e.target.value)} />
+          <input className='w-full border p-2 rounded' type="email" placeholder='E-mail' value={email} onChange={e => setEmail(e.target.value)} />
+          <input className='w-full border p-2 rounded' type="password" placeholder='Password' value={password} onChange={e => setPassword(e.target.value)} />
           <button className='w-full bg-blue-600 text-white py-2 rounded font-bold disabled:opacity-50 disabled:cursor-not-allowed' type='submit' disabled={loggingIn}>{loggingIn ? 'Entering...' : 'Login'}</button>
           <p className='text-sm text-center'>
             Don't have an account yet? <Link to='/register' className='text-blue-600 font-bold'>Register</Link>

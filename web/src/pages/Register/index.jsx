@@ -34,9 +34,9 @@ export function Register() {
       <div className='bg-white p-8 rounded-lg shadow-md w-96'>
         <h2 className='text-2xl font-bold mb-6 text-center text-blue-600'>Create your account</h2>
         <form className='space-y-4' onSubmit={handleRegister}>
-          <input className='w-full border p-2 rounded' type="text" placeholder='name' value={name} onChange={e => setName(e.target.value)}  />
-          <input className='w-full p-2 border rounded' type="email" placeholder='e-mail' value={email} onChange={e => setEmail(e.target.value)} />
-          <input className='w-full p-2 border rounded' type="password" placeholder='password' value={password} onChange={e => setPassword(e.target.value)} />
+          <input className='w-full border p-2 rounded' type="text" placeholder='Name' value={name} onChange={e => setName(e.target.value)}  />
+          <input className='w-full p-2 border rounded' type="email" placeholder='E-mail' value={email} onChange={e => setEmail(e.target.value)} />
+          <input className='w-full p-2 border rounded' type="password" placeholder='Password' value={password} onChange={e => setPassword(e.target.value)} />
           <button className='w-full bg-blue-600 text-white py-2 rounded font-bold disabled:opacity-50 disabled:cursor-not-allowed' type='submit'>{registering ? 'Registering...' : 'Register'}</button>
         </form>
         <p className='mt-4 text-center text-sm'>
