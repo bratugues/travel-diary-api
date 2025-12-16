@@ -180,7 +180,7 @@ i18n
             create_entry_btn: "Criar Registro",
             save_entry_btn: "Salvar Registro",
             delete_trip_confirm_message: "Tem certeza que deseja apagar essa viagem?",
-            see_you_soon: "See you soon!",
+            see_you_soon: "Até logo!",
             my_favorite_trips: "Minhas viagens favoritas",
             click_new_trip_to_start: "Clique em \"Nova Viagem\" para começar!",
             no_trips_yet: "Você ainda não criou nenhuma viagem.",
