@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { Navbar } from '../../../components/navbar'
 import { api } from '../../../services/api'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next';
 
 export function TripDetails() {
   const { tripId } = useParams()
@@ -17,6 +18,7 @@ export function TripDetails() {
   const [previewImage, setPreviewImage] = useState(null)
   const [editingEntry, setEditingEntry] = useState(null)
   const [isSaving, setIsSaving] = useState(false)
+  const { t } = useTranslation()
 
 
   useEffect(() => {
@@ -67,29 +69,29 @@ export function TripDetails() {
         ))
       } else{
         const response = await api.post(`/trips/${tripId}/entries`, data)
-        toast.success('Entry created successfully!')
+        toast.success(t('create_entry_success_msg'))
         setEntries(prevState => [response.data, ...prevState])
       }
 
       handleCloseModal()
     } catch (error) {
       console.error(error)
-      toast.error('Error creating entry')
+      toast.error(t('create_entry_error_msg'))
     } finally{
       setIsSaving(false)
     }
   }
 
   async function handleDeleteEntry(id){
-    const isConfirm = window.confirm('Are you sure you want to delete this memory forever?')
+    const isConfirm = window.confirm(t('delete_entry_confirm_msg'))
     if (!isConfirm) return;
     try {
       await api.delete(`/entries/${id}`)
       setEntries(prevState => prevState.filter(entry => entry.id !== id))
-      toast.success('Entry deleted successfully!')
+      toast.success(t('delete_entry_success_msg'))
     } catch (error) {
       console.error(error)
-      alert('Error deleting entry')
+      alert(t('delete_error_msg'))
     }
   }
   function handleFileChange(e){
@@ -104,7 +106,7 @@ export function TripDetails() {
       <div className="min-h-screen bg-gray-50">
         <Navbar />
         <div className="flex items-center justify-center h-[calc(100vh-64px)]">
-          <p className="text-gray-500 text-xl animate-pulse">Loading trip...</p>
+          <p className="text-gray-500 text-xl animate-pulse">{t('loading_trip')}</p>
         </div>
       </div>
     )
@@ -144,8 +146,6 @@ export function TripDetails() {
 
       <main className="max-w-5xl mx-auto px-4 py-8">
 
-        {/* CABEÇALHO DA VIAGEM */}
-        {/* Usamos 'trip &&' para garantir que 'trip' não é null antes de ler .title */}
         {trip && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
             <div className="flex items-center justify-between">
@@ -153,38 +153,33 @@ export function TripDetails() {
                 <h1 className="text-3xl font-bold text-gray-800">{trip.title}</h1>
                 <p className="text-gray-500 mt-2 flex items-center gap-2">
                   📅 {new Date(trip.startDate).toLocaleDateString()}
-                  <span>to</span>
+                  <span>{t('to')}</span>
                   {new Date(trip.endDate).toLocaleDateString()}
                 </p>
               </div>
 
-              {/* Botão de Voltar */}
               <Link to="/dashboard" className="text-blue-600 hover:underline">
-                &larr; Back
+                &larr; {t('back_btn')}
               </Link>
             </div>
           </div>
         )}
 
-        {/* SEÇÃO DE DIÁRIOS (ENTRIES) */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Logbook</h2>
+          <h2 className="text-2xl font-bold text-gray-800">{t('logbook')}</h2>
           <button onClick={() => setIsModalOpen(true)} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-bold shadow-md">
-            + New Entry
+            {t('new_entry')}
           </button>
         </div>
 
-        {/* LISTA DE CARDS DAS ENTRIES */}
         <div className="space-y-6">
           {entries.length === 0 && (
-            <p className="text-gray-500 text-center py-10">No entries yet. Start writing!</p>
+            <p className="text-gray-500 text-center py-10">{t('no_entries_yet')}</p>
           )}
 
           {entries.map(entry => (
             <div key={entry.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col md:flex-row">
 
-              {/* FOTO (Se tiver) */}
-              {/* Aqui usamos a lógica: Se tiver imageUrl, mostra a foto. Se não, não mostra nada. */}
               {entry.imageUrl && (
                 <div className="md:w-1/3 h-64 md:h-auto bg-gray-100">
                   <img
@@ -195,7 +190,6 @@ export function TripDetails() {
                 </div>
               )}
 
-              {/* CONTEÚDO */}
               <div className={`p-6 ${entry.imageUrl ? 'md:w-2/3' : 'w-full'}`}>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-blue-600 font-medium">
@@ -222,7 +216,7 @@ export function TripDetails() {
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden animate-fade-in">
             <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-              <h2 className="text-xl font-bold text-gray-800">{editingEntry ? 'Edit entry' : 'New Entry'}</h2>
+              <h2 className="text-xl font-bold text-gray-800">{editingEntry ? t('edit_entry_title') : t('new_entry_title')}</h2>
               <button
                 onClick={handleCloseModal}
                 className="text-gray-400 hover:text-gray-600 transition"
@@ -234,19 +228,19 @@ export function TripDetails() {
             <form onSubmit={handleSaveEntry} className="p-6 space-y-4">
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('title')}</label>
                 <input
                   type="text"
                   required
                   className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                  placeholder="Ex: Visit to the Eiffel Tower"
+                  placeholder={t('entry_title_placeholder')}
                   value={newEntryTitle}
                   onChange={e => setNewEntryTitle(e.target.value)}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('date')}</label>
                 <input
                   type="date"
                   required
@@ -257,23 +251,23 @@ export function TripDetails() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('description')}</label>
                 <textarea
                   required
                   rows="4"
                   className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 outline-none resize-none"
-                  placeholder="What happened today?"
+                  placeholder={t('entry_description_placeholder')}
                   value={newEntryContent}
                   onChange={e => setNewEntryContent(e.target.value)}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Photo (Optional)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('photo')}</label>
 
                 <div className="flex items-center gap-4">
                   <label className="cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition border border-gray-300 flex items-center gap-2">
-                    📷 Choose Photo
+                    {t('photo_btn')}
                     <input
                       type="file"
                       className="hidden"
@@ -287,7 +281,7 @@ export function TripDetails() {
                       <img src={previewImage} alt="Preview" className="h-full w-full object-cover" />
                     </div>
                   )}
-                  {previewImage && <span className="text-xs text-green-600 font-medium">Selected!</span>}
+                  {previewImage && <span className="text-xs text-green-600 font-medium">{t('selected')}</span>}
                 </div>
               </div>
 
@@ -297,14 +291,14 @@ export function TripDetails() {
                   onClick={handleCloseModal}
                   className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition font-medium"
                 >
-                  Cancel
+                  {t('cancel')}
                 </button>
                 <button
                   type="submit"
                   disabled={isSaving}
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-bold shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSaving ? 'Saving...' : (editingEntry ? 'Save Entry' : 'Create Entry')}
+                  {isSaving ? t('saving') : (editingEntry ? t('save_entry_btn') : t('create_entry_btn'))}
                 </button>
               </div>
 

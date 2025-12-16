@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { Navbar } from "../../../components/navbar"
 import { api } from "../../../services/api"
 import { toast } from 'sonner'
 import { TripList } from '../../../components/TripList'
+import { useTranslation } from 'react-i18next';
 
 export function Dashboard() {
-
+  const { t } = useTranslation()
   const [trips, setTrips] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [newTrip, setNewTrip] = useState({
@@ -43,7 +43,7 @@ export function Dashboard() {
       <div className="min-h-screen bg-gray-50">
         <Navbar />
         <div className="flex items-center justify-center h-[calc(100vh-64px)]">
-          <p className="text-gray-500 text-xl animate-pulse">Loading trips...</p>
+          <p className="text-gray-500 text-xl animate-pulse">{t('loading_trips')}</p>
         </div>
       </div>
     )
@@ -103,16 +103,16 @@ export function Dashboard() {
     e.preventDefault()
     e.stopPropagation()
 
-    const isConfirmed = window.confirm('Are you sure you want to delete this trip?')
+    const isConfirmed = window.confirm(t('delete_trip_confirm_message'))
     if(!isConfirmed) return
 
     try {
       await api.delete(`trips/${id}`)
-      toast.success('Trip deleted successfully!')
+      toast.success(t('delete_trip_success_msg'))
       setTrips(prevState => prevState.filter(trip => trip.id !== id))
     } catch (error) {
       console.error(error)
-      toast.error('Error while deleting trip...')
+      toast.error(t('delete_trip_error_msg'))
     }
   }
 
@@ -153,14 +153,14 @@ export function Dashboard() {
       <main className="max-w-7xl mx-auto px-4 py-8">
 
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold text-gray-800">My trips</h2>
-          <button onClick={() => setIsModalOpen(true)} className="bg-blue-600 text-white rounded-lg px-4 py-2 hover:bg-blue-700 transition font-bold shadow-md">+ New Trip</button>
+          <h2 className="text-2xl font-bold text-gray-800">{t('my_trips')}</h2>
+          <button onClick={() => setIsModalOpen(true)} className="bg-blue-600 text-white rounded-lg px-4 py-2 hover:bg-blue-700 transition font-bold shadow-md">{t('add_new_trip')}</button>
         </div>
 
         <div className="mb-6">
           <input
             type="text"
-            placeholder="Search for a trip..."
+            placeholder={t('search_bar')}
             className="w-full p-3 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 outline-none transition"
             value={search}
             onChange={(e) => setSearch(e.target.value)}/>
@@ -168,17 +168,17 @@ export function Dashboard() {
 
         {isLoading && (
           <div className="flex items-center justify-center py-20">
-          <p className="text-gray-500 text-xl animate-pulse">Loading trips... 🌍</p>
+          <p className="text-gray-500 text-xl animate-pulse">{t('loading_trips')}</p>
           </div>
         )}
 
         {!isLoading && trips.length === 0 && (
           <div className="text-center py-10 bg-white rounded-xl border border-dashed border-gray-300">
             <p className="text-gray-500 text-lg">
-              {search ? `No trips found matching "${search}"` : "You haven't created any trips yet."}
+              {search ? t('no_trips_found', { search: search }) : t('no_trips_yet')}
             </p>
             {!search && (
-                <span className="text-sm text-gray-400">Click "New Trip" to start!</span>
+                <span className="text-sm text-gray-400">{t('click_new_trip_to_start')}</span>
             )}
           </div>
         )}
@@ -195,31 +195,31 @@ export function Dashboard() {
       {isModalOpen && (
         <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50'>
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 m-4">
-            <h2 className="text-xl font-bold mb-4 text-gray-800">{isEditingId ? 'Update trip' : 'New Trip'}</h2>
+            <h2 className="text-xl font-bold mb-4 text-gray-800">{isEditingId ? t('update_trip') : t('create_trip')}</h2>
             <form onSubmit={handleSaveTrip} className='space-y-4'>
               <div>
-                <label className="block text-sm text-gray-600 mb-1">Title</label>
-                <input placeholder='Ex.: Paris 2025' className='w-full border rounded p-2' value={newTrip.title} onChange={e => setNewTrip({...newTrip, title: e.target.value})} />
+                <label className="block text-sm text-gray-600 mb-1">{t('title')}</label>
+                <input placeholder={t('title_placeholder')} className='w-full border rounded p-2' value={newTrip.title} onChange={e => setNewTrip({...newTrip, title: e.target.value})} />
               </div>
               <div>
-                <label className="block text-sm text-gray-600 mb-1">Description</label>
-                <input placeholder='Ex.: Trip to visit girlfriend' className='w-full border rounded p-2' value={newTrip.description} onChange={e => setNewTrip({...newTrip, description: e.target.value})} />
+                <label className="block text-sm text-gray-600 mb-1">{t('description')}</label>
+                <input placeholder={t('description_placeholder')} className='w-full border rounded p-2' value={newTrip.description} onChange={e => setNewTrip({...newTrip, description: e.target.value})} />
               </div>
               <div className='grid grid-cols-2 gap-4'>
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">Start</label>
+                  <label className="block text-sm text-gray-600 mb-1">{t('start')}</label>
                   <input type='date' className='w-full border rounded p-2' value={newTrip.startDate} onChange={e => setNewTrip({...newTrip, startDate: e.target.value})} />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-600 mb-1">End</label>
+                  <label className="block text-sm text-gray-600 mb-1">{t('end')}</label>
                   <input type='date' className='w-full border rounded p-2' value={newTrip.endDate} onChange={e => setNewTrip({...newTrip, endDate: e.target.value})} />
                 </div>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Cover Image (Optional)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('cover_image')}</label>
 
                   <div className="flex items-center gap-4">
                     <label className="cursor-pointer bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-lg transition flex items-center gap-2 text-sm font-medium">
-                      📷 Upload Cover
+                      {t('upload_cover_btn')}
                       <input
                         type="file"
                         className="hidden"
@@ -233,15 +233,15 @@ export function Dashboard() {
                         <img src={previewTripImage} className="w-full h-full object-cover" />
                       </div>
                     ) : (
-                      <span className="text-xs text-gray-400">No image selected</span>
+                      <span className="text-xs text-gray-400">{t('preview_img_txt')}</span>
                     )}
                   </div>
                 </div>
               </div>
 
               <div className='flex justify-end gap-2 mt-6'>
-                <button type='button' className='px-4 py-2 text-gray-600 hover:bg-gray-100 rounded' onClick={(handleCloseModal)}>Cancel</button>
-                <button className='px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-bold disabled:opacity-50 disabled:cursor-not-allowed' type='submit' disabled={isSaving}>{isSaving ? 'Saving...' : (isEditingId ? 'Update trip' : 'Create trip')}</button>
+                <button type='button' className='px-4 py-2 text-gray-600 hover:bg-gray-100 rounded' onClick={(handleCloseModal)}>{t('cancel')}</button>
+                <button className='px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-bold disabled:opacity-50 disabled:cursor-not-allowed' type='submit' disabled={isSaving}>{isSaving ? t('saving') : (isEditingId ? t('update_trip_btn') : t('create_trip_btn'))}</button>
               </div>
             </form>
           </div>

@@ -30,20 +30,27 @@ export const createTrip = async (userId, input, file) => {
 }
 
 export const listTrips = async (userId, search) => {
-  const where = {userId: userId}
+  const allTrips = await prisma.trip.findMany({
+    where: { userId: userId },
+    orderBy: { createdAt: 'desc' }
+  })
 
-  if(search){
-    where.OR = [
-      {
-        title: { contains: search }
-      },
-      {
-        description: { contains: search }
-      }
-    ]
+  if (!search) {
+    return allTrips
   }
-  const trips = await prisma.trip.findMany({where: where , orderBy: {createdAt: 'desc'}})
-  return trips
+
+  const searchLower = search.toLowerCase()
+
+  const filteredTrips = allTrips.filter(trip => {
+    const titleMatch = trip.title.toLowerCase().includes(searchLower)
+    const descriptionMatch = trip.description
+      ? trip.description.toLowerCase().includes(searchLower)
+      : false
+
+    return titleMatch || descriptionMatch
+  })
+
+  return filteredTrips
 }
 
 export const getTripById = async (id, userId) => {
